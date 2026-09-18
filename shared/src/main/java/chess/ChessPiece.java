@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -78,7 +79,30 @@ public class ChessPiece {
     };
 
     private Collection<ChessMove> slidingMoves(ChessBoard board, ChessPosition myPosition, int[][] direction){
-        throw new RuntimeException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        ChessPiece piece = board.getPiece(myPosition);
+        for (int[] dir : direction) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+            boolean isEnd = false;
+            while (!isEnd) {
+                row += dir[0];
+                col += dir[1];
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupant = board.getPiece(newPos);
+                if (!onBoard(row, col)){
+                    isEnd = true;
+                } else if (occupant == null){
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                } else if (isEnemy(occupant, piece.getTeamColor())) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                    isEnd = true;
+                } else {
+                    isEnd = true;
+                }
+            }
+        }
+        return moves;
     }
 
     private boolean onBoard(int row, int col){
