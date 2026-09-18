@@ -54,9 +54,67 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        if (piece.getPieceType() == PieceType.BISHOP) {
-            return List.of();
-        }
-        return List.of();
+        return switch (piece.getPieceType()){
+            case BISHOP -> bishopMoves(board, myPosition);
+            case ROOK -> rookMoves(board, myPosition);
+            case QUEEN -> queenMoves(board, myPosition);
+            case KNIGHT -> knightMoves(board, myPosition);
+            case KING -> kingMoves(board, myPosition);
+            case PAWN -> pawnMoves(board, myPosition);
+        };
+    }
+
+    private static int[][] diagonalDirection = {
+            {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
+    };
+    private static int[][] straightDirection = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+    private static int[][] omniDirection = {
+            {1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+    private static int[][] LDirection = {
+            {1, 2}, {-1, 2}, {2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, -2}, {-1, -2}
+    };
+
+    private Collection<ChessMove> slidingMoves(ChessBoard board, ChessPosition myPosition, int[][] direction){
+        throw new RuntimeException("Not implemented");
+    }
+
+    private boolean onBoard(int row, int col){
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
+
+    private boolean isEnemy(ChessPiece occupant, ChessGame.TeamColor myColor) {
+        return occupant != null && occupant.getTeamColor() != myColor;
+    }
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public String toString() {
+        return pieceColor + " " + type;
     }
 }
