@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -65,16 +66,16 @@ public class ChessPiece {
         };
     }
 
-    private static int[][] diagonalDirection = {
+    private static final int[][] diagonalDirection = {
             {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
     };
-    private static int[][] straightDirection = {
+    private static final int[][] straightDirection = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
     };
-    private static int[][] omniDirection = {
+    private static final int[][] omniDirection = {
             {1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
     };
-    private static int[][] LDirection = {
+    private static final int[][] LDirection = {
             {1, 2}, {-1, 2}, {2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, -2}, {-1, -2}
     };
 
@@ -88,11 +89,13 @@ public class ChessPiece {
             while (!isEnd) {
                 row += dir[0];
                 col += dir[1];
-                ChessPosition newPos = new ChessPosition(row, col);
-                ChessPiece occupant = board.getPiece(newPos);
                 if (!onBoard(row, col)){
                     isEnd = true;
-                } else if (occupant == null){
+                    continue;
+                }
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupant = board.getPiece(newPos);
+                if (occupant == null){
                     moves.add(new ChessMove(myPosition, newPos, null));
                 } else if (isEnemy(occupant, piece.getTeamColor())) {
                     moves.add(new ChessMove(myPosition, newPos, null));
@@ -114,15 +117,15 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return slidingMoves(board, myPosition, diagonalDirection);
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return slidingMoves(board, myPosition, straightDirection);
     }
 
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return slidingMoves(board, myPosition, omniDirection);
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
@@ -140,5 +143,18 @@ public class ChessPiece {
     @Override
     public String toString() {
         return pieceColor + " " + type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ChessPiece that)) {
+            return false;
+        }
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
