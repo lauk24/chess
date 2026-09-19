@@ -153,8 +153,44 @@ public class ChessPiece {
         return moveOnce(board, myPosition, omniDirection);
     }
 
+    private Collection<ChessMove> addPawnMove(ChessPosition from, ChessPosition to, int dir){
+        List<ChessMove> moves = new ArrayList<>();
+        int row = to.getRow();
+        PieceType[] promotedPieces = {PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT};
+        if ((dir == 1 && row == 8) || dir == -1 && row == 1) {
+            for (PieceType type : promotedPieces) {
+                moves.add(new ChessMove(from, to, type));
+            }
+        } else {
+            moves.add(new ChessMove(from, to, null));
+        }
+        return moves;
+    }
+
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        ChessPiece piece = board.getPiece(myPosition);
+        int dir = 1;
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            dir = -1;
+        }
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        if (onBoard(row+dir, col) && board.getPiece(new ChessPosition(row+dir, col)) == null){
+            moves.addAll(addPawnMove(myPosition, new ChessPosition(row+dir, col), dir));
+            if (((dir == 1 && row == 2) || (dir == -1 && row == 7)) && board.getPiece(new ChessPosition(row+dir*2, col)) == null){
+                moves.addAll(addPawnMove(myPosition, new ChessPosition(row+dir*2, col), dir));
+            }
+        }
+
+        if ((dir == 1 && row == 2) || dir == -1 && row == 7) {
+            if (null == board.getPiece(new ChessPosition(row + dir, col)) || null == board.getPiece(new ChessPosition(row + dir*2, col))) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(row + (dir * 2), col), null));
+            }
+        }
+
+        return moves;
     }
 
     @Override
