@@ -108,6 +108,23 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> moveOnce(ChessBoard board, ChessPosition myPosition, int[][] direction) {
+        List<ChessMove> moves = new ArrayList<>();
+        ChessPiece piece = board.getPiece(myPosition);
+        for (int[] dir : direction) {
+            int row = myPosition.getRow() + dir[0];
+            int col = myPosition.getColumn() + dir[1];
+            if (onBoard(row, col)){
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupant = board.getPiece(newPos);
+                if (occupant == null || isEnemy(occupant, piece.getTeamColor())){
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                }
+            }
+        }
+        return moves;
+    }
+
     private boolean onBoard(int row, int col){
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
@@ -129,11 +146,11 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return moveOnce(board, myPosition, LDirection);
     }
 
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return moveOnce(board, myPosition, omniDirection);
     }
 
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
