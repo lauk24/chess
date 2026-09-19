@@ -184,9 +184,12 @@ public class ChessPiece {
             }
         }
 
-        if ((dir == 1 && row == 2) || dir == -1 && row == 7) {
-            if (null == board.getPiece(new ChessPosition(row + dir, col)) || null == board.getPiece(new ChessPosition(row + dir*2, col))) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(row + (dir * 2), col), null));
+        for (int side : new int[]{-1, 1}) {
+            if (onBoard(row + dir, col + side)) {
+                ChessPiece occupant = board.getPiece(new ChessPosition(row + dir, col + side));
+                if (isEnemy(occupant, piece.getTeamColor())) {
+                    moves.addAll(addPawnMove(myPosition, new ChessPosition(row+dir, col+side), dir));
+                }
             }
         }
 
