@@ -1,5 +1,6 @@
 package chess;
 
+import java.awt.color.ICC_ColorSpace;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -53,6 +54,19 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
+    private ChessPosition findKing (TeamColor teamColor) {
+        for (int col = 1; col <= 8; col++){
+            for (int row = 1; row <= 8; row++){
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a move in the chess game
      *
@@ -70,7 +84,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPos = findKing(teamColor);
+        ChessPiece.PieceType[] types = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.PAWN};
+
     }
 
     /**
