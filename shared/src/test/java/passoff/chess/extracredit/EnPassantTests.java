@@ -246,4 +246,6 @@ public class EnPassantTests {
         Assertions.assertEquals(endBoard, game.getBoard(), "Incorrect Board after En Passant Move");
     }
 
+
+
 }
