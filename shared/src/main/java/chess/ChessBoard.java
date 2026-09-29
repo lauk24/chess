@@ -13,8 +13,15 @@ public class ChessBoard {
 
     ChessPiece[][] squares = new ChessPiece[8][8];
 
-    public ChessBoard() {
-        
+    public ChessBoard() { }
+
+    public ChessBoard(ChessBoard other){
+        this.squares = new ChessPiece[8][8];
+        for (int col = 1; col <= 8; col++){
+            for (int row = 1; row <= 8; row++){
+                this.squares[row-1][col-1] = other.getPiece(new ChessPosition(row, col));
+            }
+        }
     }
 
     /**
