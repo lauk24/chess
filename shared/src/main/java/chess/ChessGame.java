@@ -14,11 +14,13 @@ import java.util.Objects;
  */
 public class ChessGame {
 
-    private TeamColor teamTurn = TeamColor.WHITE;
+    private TeamColor teamTurn;
     private ChessBoard board;
 
-    public ChessGame(ChessBoard board) {
-        this.board = board;
+    public ChessGame() {
+        board = new ChessBoard();
+        board.resetBoard();
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
@@ -53,8 +55,23 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessBoard oldBoard = new ChessBoard(board);
-
+        ChessPiece piece = board.getPiece(startPosition);
+        Collection<ChessMove> valid = new ArrayList<>();
+        if (piece == null) {
+            return null;
+        }
+        ChessBoard ogBoard = board;
+        TeamColor color = piece.getTeamColor();
+        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+        for (ChessMove move : moves) {
+            board = new ChessBoard(ogBoard);
+            board.makeMove(move);
+            if (!isInCheck(color)){
+                valid.add(move);
+            }
+        }
+        board = ogBoard;
+        return valid;
     }
 
     private ChessPosition findKing (TeamColor teamColor) {
@@ -111,7 +128,7 @@ public class ChessGame {
             ChessPiece piece = board.getPiece(pos);
             Collection<ChessMove> moves = piece.pieceMoves(board, pos);
             for (ChessMove move : moves) {
-                if (move.getEndPosition() == kingPos) {
+                if (move.getEndPosition().equals(kingPos)) {
                     return true;
                 }
             }

@@ -61,6 +61,19 @@ public class ChessBoard {
         }
     }
 
+    public void makeMove(ChessMove move) {
+        int oldRow = move.getStartPosition().getRow();
+        int oldCol = move.getStartPosition().getColumn();
+        int newRow = move.getEndPosition().getRow();
+        int newCol = move.getEndPosition().getColumn();
+        if (move.getPromotionPiece() == null) {
+            squares[newRow-1][newCol-1] = squares[oldRow-1][oldCol-1];
+        } else {
+            squares[newRow-1][newCol-1] = new ChessPiece(squares[oldRow-1][oldCol-1].getTeamColor(), move.getPromotionPiece());
+        }
+        squares[oldRow-1][oldCol-1] = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ChessBoard that)) {
