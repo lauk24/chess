@@ -16,6 +16,7 @@ public class ChessGame {
 
     private TeamColor teamTurn;
     private ChessBoard board;
+    private final List<ChessMove> moveHistory = new ArrayList<>();
 
     public ChessGame() {
         board = new ChessBoard();
@@ -121,6 +122,7 @@ public class ChessGame {
             throw new InvalidMoveException("Illegal Move");
         }
         board.makeMove(move);
+        moveHistory.add(move);
         if (teamTurn == TeamColor.WHITE) {
             teamTurn = TeamColor.BLACK;
         } else {
@@ -153,6 +155,15 @@ public class ChessGame {
         return false;
     }
 
+    private Collection<ChessMove> findMoves(TeamColor teamColor){
+        Collection<ChessPosition> teamPos = findTeam(teamColor);
+        Collection<ChessMove> moves = new ArrayList<>();
+        for (ChessPosition pos : teamPos) {
+            moves.addAll(validMoves(pos));
+        }
+        return moves;
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -160,7 +171,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return findMoves(teamColor).isEmpty() && isInCheck(teamColor);
     }
 
     /**
@@ -171,7 +182,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return findMoves(teamColor).isEmpty() && !isInCheck(teamColor);
     }
 
     /**
