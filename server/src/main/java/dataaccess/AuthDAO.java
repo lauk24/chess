@@ -1,5 +1,5 @@
 package dataaccess;
 
-public interface UserDataAccess {
+public interface AuthDAO {
     void clear() throws DataAccessException;
 }

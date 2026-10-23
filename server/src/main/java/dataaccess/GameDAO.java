@@ -1,5 +1,5 @@
 package dataaccess;
 
-public interface AuthDataAccess {
+public interface GameDAO {
     void clear() throws DataAccessException;
 }
