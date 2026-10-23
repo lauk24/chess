@@ -2,7 +2,7 @@ package dataaccess;
 import model.*;
 import java.util.HashMap;
 
-public class MemoryUserDataAccess implements UserDataAccess {
+public class MemoryUserDAO implements UserDataAccess {
     final private HashMap<Integer, AuthData> users = new HashMap<>();
 
     @Override

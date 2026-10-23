@@ -4,7 +4,7 @@ import model.AuthData;
 
 import java.util.HashMap;
 
-public class MemoryAuthDataAccess implements AuthDataAccess {
+public class MemoryAuthDAO implements AuthDataAccess {
     final private HashMap<Integer, AuthData> auth = new HashMap<>();
 
     @Override

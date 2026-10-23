@@ -12,8 +12,11 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
-        javalin.delete("/db", ctx -> ctx.result(""));
+        javalin.delete("/db", Server::clear);
         javalin.post("/user", Server::register);
+    }
+
+    private static void clear(Context ctx){
 
     }
 

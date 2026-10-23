@@ -4,7 +4,7 @@ import model.AuthData;
 
 import java.util.HashMap;
 
-public class MemoryGameDataAccess implements GameDataAccess {
+public class MemoryGameDAO implements GameDataAccess {
     final private HashMap<Integer, AuthData> games = new HashMap<>();
 
     @Override
