@@ -38,18 +38,20 @@ public class Server {
     }
 
     private void badRequestHandler(Exception ex, Context ctx) {
-        ctx.status(400);
-        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+        sendError(ctx, 400, ex.getMessage());
     }
 
     private void alreadyTakenHandler(Exception ex, Context ctx) {
-        ctx.status(403);
-        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+        sendError(ctx, 403, ex.getMessage());
     }
 
     private void exceptionHandler(Exception ex, Context ctx) {
-        ctx.status(500);
-        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+        sendError(ctx, 500, ex.getMessage());
+    }
+
+    private void sendError(Context ctx, int errorCode, String message) {
+        ctx.status(errorCode);
+        ctx.result(new Gson().toJson(Map.of("message", message)));
     }
 
     public int run(int desiredPort) {
