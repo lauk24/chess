@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
+import dataaccess.DataAccessException;
 
 public class UserService {
     private final AuthDAO authAccess;
