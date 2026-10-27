@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
+import service.AlreadyTakenException;
+import service.BadRequestException;
 import service.ClearService;
 import service.UserService;
 
@@ -30,12 +32,24 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", clearHandler)
                 .post("/user", userHandler::register)
+                .exception(BadRequestException.class, this::badRequestHandler)
+                .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
                 .exception(Exception.class, this::exceptionHandler);
+    }
+
+    private void badRequestHandler(Exception ex, Context ctx) {
+        ctx.status(400);
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void alreadyTakenHandler(Exception ex, Context ctx) {
+        ctx.status(403);
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
 
     private void exceptionHandler(Exception ex, Context ctx) {
         ctx.status(500);
-        ctx.result(new Gson().toJson(Map.of("message", "Error: " + ex.getMessage())));
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
 
     public int run(int desiredPort) {
