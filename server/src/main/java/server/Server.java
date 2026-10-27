@@ -5,6 +5,7 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.ClearService;
+import service.UserService;
 
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class Server {
 
     private final Javalin javalin;
     private final ClearService clearService;
+    private final UserService userService;
 
     public Server() {
         AuthDAO authDAO = new MemoryAuthDAO();
@@ -19,19 +21,16 @@ public class Server {
         UserDAO userDAO = new MemoryUserDAO();
 
         clearService = new ClearService(authDAO, gameDAO, userDAO);
+        userService = new UserService(authDAO, userDAO);
+
         ClearHandler clearHandler = new ClearHandler(clearService);
-        RegisterHandler registerHandler = new RegisterHandler();
+        UserHandler userHandler = new UserHandler(userService);
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", clearHandler)
-                .post("/user", registerHandler)
+                .post("/user", userHandler::register)
                 .exception(Exception.class, this::exceptionHandler);
-    }
-
-    private static void register(Context ctx) {
-        var result = Map.of("username", "", "authtoken", "");
-        ctx.result(new Gson().toJson(result));
     }
 
     private void exceptionHandler(Exception ex, Context ctx) {
