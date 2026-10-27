@@ -23,11 +23,37 @@ public class UserServiceTest {
 
     @Test
     void registerSuccess() throws Exception {
-        AuthData auth = service.register(new RegisterRequest("NewUser", "newUserPassword", "nu@mail.com"));
+        AuthData auth = service.register(new RegisterRequest("newUser", "newPassword", "nu@mail.com"));
 
-        assertEquals("NewUser", auth.username());
+        assertEquals("newUser", auth.username());
         assertNotNull(auth.authToken());
-        assertNotNull(userAccess.getUser("NewUser"));
+        assertNotNull(userAccess.getUser("newUser"));
         assertNotNull(authAccess.getAuth(auth.authToken()));
+    }
+    @Test
+    void registerAlreadyExists() throws Exception {
+        service.register(new RegisterRequest("dupUser", "dupPassword", "du@mail.com"));
+
+        assertThrows(AlreadyTakenException.class, () -> {
+            service.register(new RegisterRequest("dupUser", "otherPassword", "other@mail.com"));
+        });
+    }
+
+    @Test
+    void registerBadRequest() throws Exception {
+        assertAll(
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.register(null);
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.register(new RegisterRequest(null, "newPassword", "nu@mail.com"));
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.register(new RegisterRequest("newUser", null, "nu@mail.com"));
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.register(new RegisterRequest("newUser", "newPassword", null));
+                })
+        );
     }
 }
