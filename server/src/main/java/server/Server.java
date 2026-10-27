@@ -20,11 +20,12 @@ public class Server {
 
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
+        RegisterHandler registerHandler = new RegisterHandler();
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", clearHandler)
-                .post("/user", Server::register)
+                .post("/user", registerHandler)
                 .exception(Exception.class, this::exceptionHandler);
     }
 
