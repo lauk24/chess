@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.ClearService;
-import service.UserService;
+import service.*;
 
 import java.util.Map;
 
@@ -35,6 +32,7 @@ public class Server {
                 .post("/session", userHandler::login)
                 .exception(BadRequestException.class, this::badRequestHandler)
                 .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
+                .exception(UnauthorizedException.class, this::unauthorizedHandler)
                 .exception(Exception.class, this::exceptionHandler);
     }
 
@@ -44,6 +42,10 @@ public class Server {
 
     private void alreadyTakenHandler(Exception ex, Context ctx) {
         sendError(ctx, 403, ex.getMessage());
+    }
+
+    private void unauthorizedHandler(Exception ex, Context ctx) {
+        sendError(ctx, 401, ex.getMessage());
     }
 
     private void exceptionHandler(Exception ex, Context ctx) {
