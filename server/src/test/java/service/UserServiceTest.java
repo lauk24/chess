@@ -22,9 +22,10 @@ public class UserServiceTest {
 
     @Test
     void registerSuccess() throws Exception {
-        AuthData auth = service.register(new RegisterRequest("newUser", "newPassword", "nu@mail.com"));
+        RegisterRequest request = new RegisterRequest("newUser", "newPassword", "nu@mail.com");
+        AuthData auth = service.register(request);
 
-        assertEquals("newUser", auth.username());
+        assertEquals(request.username(), auth.username());
         assertNotNull(auth.authToken());
         assertNotNull(userAccess.getUser("newUser"));
         assertNotNull(authAccess.getAuth(auth.authToken()));
