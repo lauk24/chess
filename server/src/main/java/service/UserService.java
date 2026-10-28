@@ -6,6 +6,8 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
+import javax.xml.crypto.Data;
+
 public class UserService {
     private final AuthDAO authAccess;
     private final UserDAO userAccess;
@@ -38,5 +40,13 @@ public class UserService {
             throw new UnauthorizedException("Error: incorrect password");
         }
         return authAccess.createAuth(user.username());
+    }
+
+    public void logout(String authToken) throws UnauthorizedException, DataAccessException {
+        AuthData auth = authAccess.getAuth(authToken);
+        if (auth == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        authAccess.deleteAuth(authToken);
     }
 }
