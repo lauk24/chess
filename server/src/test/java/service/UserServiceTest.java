@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
+import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,8 +18,6 @@ public class UserServiceTest {
         authAccess = new MemoryAuthDAO();
         service = new UserService(authAccess, userAccess);
     }
-
-
 
     @Test
     void registerSuccess() throws Exception {
@@ -55,5 +54,60 @@ public class UserServiceTest {
                     service.register(new RegisterRequest("newUser", "newPassword", null));
                 })
         );
+    }
+
+    @Test
+    void loginSuccess() throws Exception {
+        userAccess.createUser(new UserData("existingUser", "existingPassword", "ex@mail.com"));
+        LoginRequest request = new LoginRequest("existingUser", "existingPassword");
+        service.login(request);
+        assertEquals(request.password(), userAccess.getUser(request.username()).password());
+    }
+
+    @Test
+    void loginNotFound() throws Exception {
+        LoginRequest request = new LoginRequest("existingUser", "existingPassword");
+        assertThrows(UnauthorizedException.class, () -> {
+            service.login(request);
+        });
+    }
+
+    @Test
+    void loginWrongPassword() throws Exception{
+        userAccess.createUser(new UserData("existingUser", "existingPassword", "ex@mail.com"));
+        LoginRequest request = new LoginRequest("existingUser", "wrongPassword");
+        assertThrows(UnauthorizedException.class, () -> {
+            service.login(request);
+        });
+    }
+
+    @Test
+    void loginBadRequest() throws Exception {
+        assertAll(
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.login(null);
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.login(new LoginRequest(null, "newPassword"));
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.login(new LoginRequest("newUser", null));
+                })
+        );
+    }
+
+    @Test
+    void logoutSuccess() throws Exception {
+        AuthData auth = service.register(new RegisterRequest("newUser", "newPassword", "nu@mail.com"));
+        service.logout(auth.authToken());
+        assertNull(authAccess.getAuth(auth.authToken()));
+    }
+
+    @Test
+    void logoutBadToken() throws Exception {
+        AuthData auth = service.register(new RegisterRequest("newUser", "newPassword", "nu@mail.com"));
+        assertThrows(UnauthorizedException.class, () -> {
+            service.logout("badToken");
+        });
     }
 }
