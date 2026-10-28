@@ -24,4 +24,9 @@ public class UserHandler {
         AuthData auth = service.login(request);
         ctx.result(gson.toJson(auth));
     }
+
+    public void logout(Context ctx) throws UnauthorizedException, DataAccessException {
+        service.logout(ctx.header("authorization"));
+        ctx.result("{}");
+    }
 }

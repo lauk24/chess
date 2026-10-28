@@ -30,6 +30,7 @@ public class Server {
                 .delete("/db", clearHandler)
                 .post("/user", userHandler::register)
                 .post("/session", userHandler::login)
+                .delete("/session", userHandler::logout)
                 .exception(BadRequestException.class, this::badRequestHandler)
                 .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
                 .exception(UnauthorizedException.class, this::unauthorizedHandler)
