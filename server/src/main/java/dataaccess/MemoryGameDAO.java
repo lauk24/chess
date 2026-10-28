@@ -1,14 +1,28 @@
 package dataaccess;
 
-import model.AuthData;
-
-import java.util.HashMap;
+import chess.ChessGame;
+import model.GameData;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class MemoryGameDAO implements GameDAO {
-    final private HashMap<Integer, AuthData> games = new HashMap<>();
+    final private LinkedHashMap<Integer, GameData> games = new LinkedHashMap<>();
+    int gameIndex = 0;
 
     @Override
     public void clear() {
         games.clear();
+    }
+
+    @Override
+    public ArrayList<GameData> listGames(){
+        return new ArrayList<>(games.values());
+    }
+
+    @Override
+    public int createGame(String gameName) {
+        int gameID = gameIndex++;
+        games.put(gameID, new GameData(gameID, null, null, gameName, new ChessGame()));
+        return gameID;
     }
 }
