@@ -18,4 +18,10 @@ public class UserHandler {
         AuthData auth = service.register(request);
         ctx.result(gson.toJson(auth));
     }
+
+    public void login(Context ctx) throws BadRequestException, UnauthorizedException, DataAccessException {
+        LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
+        AuthData auth = service.login(request);
+        ctx.result(gson.toJson(auth));
+    }
 }
