@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
+import model.UserData;
 
 public class UserService {
     private final AuthDAO authAccess;
@@ -23,5 +24,19 @@ public class UserService {
         }
         userAccess.createUser(request.userData());
         return authAccess.createAuth(request.username());
+    }
+
+    public AuthData login(LoginRequest request) throws BadRequestException, UnauthorizedException, DataAccessException {
+        if (request == null || request.username() == null || request.password() == null){
+            throw new BadRequestException("Error: bad request");
+        }
+        UserData user = userAccess.getUser(request.username());
+        if (user == null) {
+            throw new UnauthorizedException("Error: user does not exist");
+        }
+        if (!request.password().equals(user.password())) {
+            throw new UnauthorizedException("Error: incorrect password");
+        }
+        return authAccess.createAuth(user.username());
     }
 }
