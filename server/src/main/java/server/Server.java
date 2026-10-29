@@ -13,6 +13,7 @@ public class Server {
     private final Javalin javalin;
     private final ClearService clearService;
     private final UserService userService;
+    private final GameService gameService;
 
     public Server() {
         AuthDAO authDAO = new MemoryAuthDAO();
@@ -21,9 +22,11 @@ public class Server {
 
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
+        gameService = new GameService(authDAO, userDAO, gameDAO);
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         UserHandler userHandler = new UserHandler(userService);
+        GameHandler gameHandler = new GameHandler(gameService);
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -31,6 +34,7 @@ public class Server {
                 .post("/user", userHandler::register)
                 .post("/session", userHandler::login)
                 .delete("/session", userHandler::logout)
+                .post("/game", gameHandler::createGame)
                 .exception(BadRequestException.class, this::badRequestHandler)
                 .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
                 .exception(UnauthorizedException.class, this::unauthorizedHandler)

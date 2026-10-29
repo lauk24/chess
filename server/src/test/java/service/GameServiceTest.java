@@ -4,6 +4,9 @@ import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
@@ -43,6 +46,23 @@ public class GameServiceTest {
         AuthData auth = authAccess.createAuth("newUser");
         assertThrows(BadRequestException.class, () -> {
             service.createGame(new CreateGameRequest(auth.authToken(), null));
+        });
+    }
+
+    @Test
+    void listGamesSuccess() throws Exception {
+        String authToken = authAccess.createAuth("newUser").authToken();
+        service.createGame(new CreateGameRequest(authToken, "game1"));
+        service.createGame(new CreateGameRequest(authToken, "game2"));
+        Collection<GameData> games = service.listGames(authToken);
+
+        assertEquals(2, games.size());
+    }
+
+    @Test
+    void listGamesBadToken() throws Exception {
+        assertThrows(UnauthorizedException.class, () -> {
+            service.listGames("badToken");
         });
     }
 }
