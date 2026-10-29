@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 
 public class MemoryGameDAO implements GameDAO {
     final private LinkedHashMap<Integer, GameData> games = new LinkedHashMap<>();
-    int gameIndex = 0;
+    int gameIndex = 1;
 
     @Override
     public void clear() {
@@ -32,7 +32,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData newGameData) {
+    public void updateGame(GameData newGameData) throws DataAccessException {
+        if (games.containsKey(newGameData.gameID())){
+            throw new DataAccessException("Error: game does not exist");
+        }
         games.replace((newGameData.gameID()), newGameData);
     }
 }
