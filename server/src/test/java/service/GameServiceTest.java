@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,14 +11,12 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
-    private UserDAO userAccess;
     private AuthDAO authAccess;
     private GameDAO gameAccess;
     private GameService service;
 
     @BeforeEach
     void setup() {
-        userAccess = new MemoryUserDAO();
         authAccess = new MemoryAuthDAO();
         gameAccess = new MemoryGameDAO();
         service = new GameService(authAccess, gameAccess);
@@ -64,5 +63,50 @@ public class GameServiceTest {
         assertThrows(UnauthorizedException.class, () -> {
             service.listGames("badToken");
         });
+    }
+
+    @Test
+    void joinGameSuccess() throws Exception {
+        String authToken1 = authAccess.createAuth("newUser1").authToken();
+        String authToken2 = authAccess.createAuth("newUser2").authToken();
+        int gameID = service.createGame(new CreateGameRequest(authToken1, "game"));
+        service.joinGame(new JoinGameRequest(authToken1, ChessGame.TeamColor.WHITE, gameID));
+        service.joinGame(new JoinGameRequest(authToken2, ChessGame.TeamColor.BLACK, gameID));
+        assertEquals("newUser1", gameAccess.getGame(gameID).whiteUsername());
+        assertEquals("newUser2", gameAccess.getGame(gameID).blackUsername());
+    }
+
+    @Test
+    void joinGameAlreadyTaken() throws Exception {
+        String authToken1 = authAccess.createAuth("newUser1").authToken();
+        String authToken2 = authAccess.createAuth("newUser2").authToken();
+        int gameID = service.createGame(new CreateGameRequest(authToken1, "game"));
+        service.joinGame(new JoinGameRequest(authToken1, ChessGame.TeamColor.WHITE, gameID));
+        assertThrows(AlreadyTakenException.class, () -> {
+            service.joinGame(new JoinGameRequest(authToken2, ChessGame.TeamColor.WHITE, gameID));
+        });
+    }
+
+    @Test
+    void joinGameBadToken() throws Exception {
+        String authToken = authAccess.createAuth("newUser").authToken();
+        int gameID = service.createGame(new CreateGameRequest(authToken, "game"));
+        assertThrows(UnauthorizedException.class, () -> {
+            service.joinGame(new JoinGameRequest("badToken", ChessGame.TeamColor.WHITE, gameID));
+        });
+    }
+
+    @Test
+    void joinGameBadRequest() throws Exception {
+        String authToken = authAccess.createAuth("newUser").authToken();
+        int gameID = service.createGame(new CreateGameRequest(authToken, "game"));
+        assertAll(
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.joinGame(new JoinGameRequest(authToken, null, gameID));
+                }),
+                () -> assertThrows(BadRequestException.class, () -> {
+                    service.joinGame(new JoinGameRequest(authToken, ChessGame.TeamColor.WHITE, 0));
+                })
+        );
     }
 }
