@@ -35,6 +35,7 @@ public class Server {
                 .post("/session", userHandler::login)
                 .delete("/session", userHandler::logout)
                 .post("/game", gameHandler::createGame)
+                .get("/game", gameHandler::listGames)
                 .exception(BadRequestException.class, this::badRequestHandler)
                 .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
                 .exception(UnauthorizedException.class, this::unauthorizedHandler)
