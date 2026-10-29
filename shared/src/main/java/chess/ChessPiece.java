@@ -66,16 +66,16 @@ public class ChessPiece {
         };
     }
 
-    private static final int[][] diagonalDirection = {
+    private static final int[][] DIAGONAL_DIRECTION = {
             {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
     };
-    private static final int[][] straightDirection = {
+    private static final int[][] STRAIGHT_DIRECTION = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
     };
-    private static final int[][] omniDirection = {
+    private static final int[][] OMNI_DIRECTION = {
             {1, 1}, {-1, 1}, {1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}
     };
-    private static final int[][] LDirection = {
+    private static final int[][] L_DIRECTION = {
             {1, 2}, {-1, 2}, {2, 1}, {-2, 1}, {2, -1}, {-2, -1}, {1, -2}, {-1, -2}
     };
 
@@ -134,23 +134,23 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
-        return slidingMoves(board, myPosition, diagonalDirection);
+        return slidingMoves(board, myPosition, DIAGONAL_DIRECTION);
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-        return slidingMoves(board, myPosition, straightDirection);
+        return slidingMoves(board, myPosition, STRAIGHT_DIRECTION);
     }
 
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
-        return slidingMoves(board, myPosition, omniDirection);
+        return slidingMoves(board, myPosition, OMNI_DIRECTION);
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
-        return moveOnce(board, myPosition, LDirection);
+        return moveOnce(board, myPosition, L_DIRECTION);
     }
 
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        return moveOnce(board, myPosition, omniDirection);
+        return moveOnce(board, myPosition, OMNI_DIRECTION);
     }
 
     private Collection<ChessMove> addPawnMove(ChessPosition from, ChessPosition to, int dir){
