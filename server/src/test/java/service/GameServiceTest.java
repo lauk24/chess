@@ -20,7 +20,7 @@ public class GameServiceTest {
         userAccess = new MemoryUserDAO();
         authAccess = new MemoryAuthDAO();
         gameAccess = new MemoryGameDAO();
-        service = new GameService(authAccess, userAccess, gameAccess);
+        service = new GameService(authAccess, gameAccess);
     }
 
     @Test

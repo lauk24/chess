@@ -22,7 +22,7 @@ public class Server {
 
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
-        gameService = new GameService(authDAO, userDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         UserHandler userHandler = new UserHandler(userService);
