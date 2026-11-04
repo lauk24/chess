@@ -5,6 +5,7 @@ import dataaccess.UserDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final AuthDAO authAccess;
@@ -22,7 +23,8 @@ public class UserService {
         if (userAccess.getUser(request.username()) != null) {
             throw new AlreadyTakenException("Error: user already exists");
         }
-        userAccess.createUser(request.userData());
+        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        userAccess.createUser(new UserData (request.username(), hashedPassword, request.email()));
         return authAccess.createAuth(request.username());
     }
 
@@ -34,7 +36,7 @@ public class UserService {
         if (user == null) {
             throw new UnauthorizedException("Error: user does not exist");
         }
-        if (!request.password().equals(user.password())) {
+        if (!BCrypt.checkpw(request.password(), user.password())) {
             throw new UnauthorizedException("Error: incorrect password");
         }
         return authAccess.createAuth(user.username());
