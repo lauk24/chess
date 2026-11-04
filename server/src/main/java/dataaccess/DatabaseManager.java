@@ -29,7 +29,7 @@ public class DatabaseManager {
         }
     }
 
-    private final String[] createStatements = {
+    static private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS user (
                 username VARCHAR(255) NOT NULL,
@@ -57,7 +57,7 @@ public class DatabaseManager {
             """
     };
 
-    public void configureDatabase() throws DataAccessException {
+    public static void configureDatabase() throws DataAccessException {
         createDatabase();
         try (Connection conn = getConnection()) {
             for (String statement: createStatements) {
