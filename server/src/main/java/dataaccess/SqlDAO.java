@@ -3,7 +3,7 @@ package dataaccess;
 import java.sql.*;
 
 abstract class SqlDAO {
-    static private final String[] createStatements = {
+    static private final String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS user (
                 username VARCHAR(255) NOT NULL,
@@ -34,7 +34,7 @@ abstract class SqlDAO {
     public static void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement: createStatements) {
+            for (String statement: CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
@@ -49,9 +49,13 @@ abstract class SqlDAO {
             try (PreparedStatement ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param  = params[i];
-                    if (param instanceof String p) ps.setString(i+1, p);
-                    else if (param instanceof Integer p) ps.setInt(i+1, p);
-                    else if (param == null) ps.setNull(i+1, Types.NULL);
+                    if (param instanceof String p) {
+                        ps.setString(i+1, p);
+                    } else if (param instanceof Integer p) {
+                        ps.setInt(i+1, p);
+                    } else if (param == null) {
+                        ps.setNull(i+1, Types.NULL);
+                    }
                 }
                 ps.executeUpdate();
 
