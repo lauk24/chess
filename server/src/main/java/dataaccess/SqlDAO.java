@@ -55,9 +55,10 @@ abstract class SqlDAO {
                 }
                 ps.executeUpdate();
 
-                ResultSet rs = ps.getResultSet();
-                if (rs.next()) {
-                    return rs.getInt(1);
+                try(ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
                 }
                 return 0;
             }
