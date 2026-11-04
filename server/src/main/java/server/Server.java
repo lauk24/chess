@@ -17,11 +17,12 @@ public class Server {
 
     public Server() {
         AuthDAO authDAO;
-        GameDAO gameDAO = new MemoryGameDAO();
+        GameDAO gameDAO;
         UserDAO userDAO;
         try {
             userDAO = new SqlUserDAO();
-            authDAO = new MemoryAuthDAO();
+            gameDAO = new SqlGameDAO();
+            authDAO = new SqlAuthDAO();
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex.getMessage());
         }
