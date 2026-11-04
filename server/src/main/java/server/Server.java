@@ -18,7 +18,12 @@ public class Server {
     public Server() {
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
-        UserDAO userDAO = new MemoryUserDAO();
+        UserDAO userDAO;
+        try {
+            userDAO = new SqlUserDAO();
+        } catch (DataAccessException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
 
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
