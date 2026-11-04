@@ -16,11 +16,12 @@ public class Server {
     private final GameService gameService;
 
     public Server() {
-        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthDAO authDAO;
         GameDAO gameDAO = new MemoryGameDAO();
         UserDAO userDAO;
         try {
             userDAO = new SqlUserDAO();
+            authDAO = new MemoryAuthDAO();
         } catch (DataAccessException ex) {
             throw new RuntimeException(ex.getMessage());
         }

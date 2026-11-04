@@ -26,7 +26,7 @@ public class SqlAuthDAOTest {
     }
 
     @Test
-    public void createAuthNull() throws Exception {
+    public void createAuthNull() {
         assertThrows(DataAccessException.class, () -> access.createAuth(null));
     }
 
