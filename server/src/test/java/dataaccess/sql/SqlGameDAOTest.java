@@ -58,6 +58,15 @@ public class SqlGameDAOTest {
     }
 
     @Test
+    public void updateGameSuccess() throws Exception {
+        int gameID = access.createGame("newGame");
+        GameData game = access.getGame(gameID);
+        access.updateGame(new GameData(gameID, "newWhiteUser", null, "newGame", game.game()));
+        game = access.getGame(gameID);
+        assertEquals("newWhiteUser", game.whiteUsername());
+    }
+
+    @Test
     public void clearSuccess() throws Exception {
         int gameID = access.createGame("newGame");
         access.clear();
