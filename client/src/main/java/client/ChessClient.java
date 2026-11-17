@@ -152,6 +152,8 @@ public class ChessClient {
             server.joinGame(game.gameID(), color);
             return "Joined " + game.gameName() + " as " + color + ".";
         }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Expected: play <NUMBER> <WHITE|BLACK>");
     }
 
     private String help() {
