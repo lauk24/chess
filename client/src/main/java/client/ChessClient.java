@@ -46,8 +46,8 @@ public class ChessClient {
 
     private String eval(String input) {
         try {
-            String[] tokens = input.trim().toLowerCase().split("//s+");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] tokens = input.trim().split("//s+");
+            String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (state == State.SIGNEDOUT) {
                 return switch(cmd) {
@@ -95,7 +95,11 @@ public class ChessClient {
     }
 
     private String createGame(String ... params) throws ResponseException{
-
+        if (params.length >= 1) {
+            String gameName = String.join(" ", params);
+            server.createGame(gameName);
+            return "Created game " + gameName + ".";
+        }
     }
 
     private String listGames() throws ResponseException{
