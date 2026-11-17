@@ -1,9 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.RegisterRequest;
-
+import model.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,6 +18,14 @@ public class ServerFacade {
 
     public AuthData register(String username, String password, String email) throws ResponseException {
         var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email));
+        var response = sendRequest(request);
+        var result = handleResponse(response, AuthData.class);
+        authToken = result.authToken();
+        return result;
+    }
+
+    public AuthData login(String username, String password) throws ResponseException {
+        var request = buildRequest("POST", "/session", new LoginRequest(username, password));
         var response = sendRequest(request);
         var result = handleResponse(response, AuthData.class);
         authToken = result.authToken();
