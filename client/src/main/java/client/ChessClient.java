@@ -156,6 +156,16 @@ public class ChessClient {
                 "Expected: play <NUMBER> <WHITE|BLACK>");
     }
 
+    private String observeGame(String... params) throws ResponseException {
+        if (params.length == 1) {
+            var game = getGameFromString(params[0]);
+            server.joinGame(game.gameID(), null);
+            return "Observing " + game.gameName() + ".";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Expected observe <NUMBER>");
+    }
+
     private String help() {
         if (state == State.SIGNEDOUT) {
             return """
