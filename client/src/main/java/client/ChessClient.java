@@ -1,7 +1,11 @@
 package client;
+import model.GameData;
+
 import static ui.EscapeSequences.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -12,6 +16,7 @@ public class ChessClient {
 
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
+    private List<GameData> games = new ArrayList<>();
 
     public ChessClient(int port) {
         server = new ServerFacade(port);
@@ -44,10 +49,18 @@ public class ChessClient {
             String[] tokens = input.trim().toLowerCase().split("//s+");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            if (state == State.SIGNEDOUT) {
+                return switch(cmd) {
+                    case "register" -> register(params);
+                    case "login" -> login(params);
+                    case "quite" -> "quit";
+                    default -> help();
+                };
+            }
             return switch(cmd) {
-                case "register" -> register(params);
-                case "login" -> login(params);
-                case "quite" -> "quit";
+                case "logout" -> logout();
+                case "create" -> createGame(params);
+                case "list" -> listGames();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -74,15 +87,37 @@ public class ChessClient {
                 "Expected: login <USERNAME> <PASSWORD>");
     }
 
+    private String logout() throws ResponseException{
+        server.logout();
+        state = State.SIGNEDOUT;
+        games = new ArrayList<>();
+        return "Logged out.";
+    }
+
+    private String createGame(String ... params) throws ResponseException{
+
+    }
+
+    private String listGames() throws ResponseException{
+
+    }
+
     private String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    register <USERNAME> <PASSWORD> <EMAIL>
-                    login <USERNAME> <PASSWORD>
-                    quit
-                    help
+                    register <USERNAME> <PASSWORD> <EMAIL> - Create an account
+                    login <USERNAME> <PASSWORD> - Login into account
+                    quit - Exit program
+                    help - List commands
                     """;
         }
-        return "";
+        return """
+                create <NAME> - Create a game
+                list - List all games
+                play <NUMBER> <WHITE|BLACK> - Join a game
+                observe <NUMBER> - Watch a game
+                logout - Sign out
+                help - List commands
+                """;
     }
 }
