@@ -100,7 +100,13 @@ public class ChessClient {
     private String createGame(String ... params) throws ResponseException{
         if (params.length >= 1) {
             String gameName = String.join(" ", params);
-            server.createGame(gameName);
+            int gameID = server.createGame(gameName);
+            games = server.listGames();
+            for (int i = 0; i < games.size(); i++) {
+                if (games.get(i).gameID() == gameID) {
+                    return "Created game " + gameName + " (" + i + ").";
+                }
+            }
             return "Created game " + gameName + ".";
         }
         throw new ResponseException(ResponseException.Code.ClientError,
@@ -132,7 +138,7 @@ public class ChessClient {
             throw new ResponseException(ResponseException.Code.ClientError,
                     "The game number must be a positive integer.");
         }
-        if (number > 1 || number < games.size()) {
+        if (number >= 1 || number < games.size()) {
             return games.get(number - 1);
         }
         throw new ResponseException(ResponseException.Code.ClientError,
