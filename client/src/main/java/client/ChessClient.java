@@ -100,10 +100,25 @@ public class ChessClient {
             server.createGame(gameName);
             return "Created game " + gameName + ".";
         }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Expected: create <NAME>");
     }
 
     private String listGames() throws ResponseException{
-
+        games = server.listGames();
+        if (games.isEmpty()) {
+            return "There are no current games. Use create <NAME> to start one.";
+        }
+        var result = new StringBuilder();
+        for (int i = 0; i < games.size(); i++) {
+            var game = games.get(i);
+            result.append(String.format("%d. %s (white: %s, black: %s)%n",
+                    i + 1,
+                    game.gameName(),
+                    game.whiteUsername() == null ? "-" : game.whiteUsername(),
+                    game.blackUsername() == null ? "-" : game.blackUsername()));
+        }
+        return result.toString();
     }
 
     private String help() {
