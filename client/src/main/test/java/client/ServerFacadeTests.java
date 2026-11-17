@@ -87,4 +87,20 @@ public class ServerFacadeTests {
                 () -> facade.createGame("badGame"));
     }
 
+    @Test
+    void listGamesSuccess() throws Exception {
+        facade.register("newUser", "newPassword", "nu@gmail.com");
+        int gameID1 = facade.createGame("newGame1");
+        int gameID2 = facade.createGame("newGame2");
+        var games = facade.listGames();
+        assertEquals(2, games.size());
+    }
+
+    @Test
+    void listGamesNotAuth() throws Exception {
+        facade.register("newUser", "newPassword", "nu@gmail.com");
+        facade.logout();
+        assertThrows(ResponseException.class,
+                () -> facade.listGames());
+    }
 }

@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -43,6 +44,13 @@ public class ServerFacade {
         var response = sendRequest(request);
         var result = handleResponse(response, CreateGameResult.class);
         return result.gameID();
+    }
+
+    public ArrayList<GameData> listGames() throws ResponseException {
+        var request = buildRequest("GET", "/game", null);
+        var response = sendRequest(request);
+        var result = handleResponse(response, ListGamesResult.class);
+        return new ArrayList<>(result.games());
     }
 
     public void clear() throws ResponseException {
