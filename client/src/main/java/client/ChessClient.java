@@ -42,19 +42,19 @@ public class ChessClient {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + ">>>" + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + RESET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 
     private String eval(String input) {
         try {
-            String[] tokens = input.trim().split("//s+");
+            String[] tokens = input.trim().split("\\s+");
             String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (state == State.SIGNEDOUT) {
                 return switch(cmd) {
                     case "register" -> register(params);
                     case "login" -> login(params);
-                    case "quite" -> "quit";
+                    case "quit" -> "quit";
                     default -> help();
                 };
             }
