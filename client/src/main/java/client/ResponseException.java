@@ -18,10 +18,6 @@ public class ResponseException extends Exception {
         this.code = code;
     }
 
-    public Code code() {
-        return code;
-    }
-
     public static ResponseException fromJson(String json, int httpStatusCode) {
         String message = "Something went wrong. Please try again.";
         try {
