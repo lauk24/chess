@@ -1,5 +1,7 @@
 package client;
 import static ui.EscapeSequences.*;
+
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -39,9 +41,48 @@ public class ChessClient {
 
     private String eval(String input) {
         try {
-
+            String[] tokens = input.trim().toLowerCase().split("//s+");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch(cmd) {
+                case "register" -> register(params);
+                case "login" -> login(params);
+                case "quite" -> "quit";
+                default -> help();
+            };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    private String register(String... params) throws ResponseException{
+        if (params.length == 3) {
+            server.register(params[0], params[1], params[2]);
+            state = State.SIGNEDIN;
+            return "Registered and logged in as " + params[0] + ".";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Expected: register <USERNAME> <PASSWORD> <EMAIL>");
+    }
+    private String login(String... params) throws ResponseException{
+        if (params.length == 2) {
+            server.login(params[0], params[1]);
+            state = State.SIGNEDIN;
+            return "Logged in as " + params[0] + ".";
+        }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Expected: login <USERNAME> <PASSWORD>");
+    }
+
+    private String help() {
+        if (state == State.SIGNEDOUT) {
+            return """
+                    register <USERNAME> <PASSWORD> <EMAIL>
+                    login <USERNAME> <PASSWORD>
+                    quit
+                    help
+                    """;
+        }
+        return "";
     }
 }
