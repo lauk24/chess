@@ -1,4 +1,5 @@
 package client;
+import chess.ChessGame;
 import model.GameData;
 
 import static ui.EscapeSequences.*;
@@ -61,6 +62,8 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
+                case "play" -> joinGame(params);
+                case "observe" -> observeGame(params);
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -104,7 +107,7 @@ public class ChessClient {
                 "Expected: create <NAME>");
     }
 
-    private String listGames() throws ResponseException{
+    private String listGames() throws ResponseException {
         games = server.listGames();
         if (games.isEmpty()) {
             return "There are no current games. Use create <NAME> to start one.";
@@ -119,6 +122,36 @@ public class ChessClient {
                     game.blackUsername() == null ? "-" : game.blackUsername()));
         }
         return result.toString();
+    }
+
+    private GameData getGameFromString(String numberString) throws ResponseException {
+        int number;
+        try {
+            number = Integer.parseInt(numberString);
+        } catch (NumberFormatException ex) {
+            throw new ResponseException(ResponseException.Code.ClientError,
+                    "The game number must be a positive integer.");
+        }
+        if (number > 1 || number < games.size()) {
+            return games.get(number - 1);
+        }
+        throw new ResponseException(ResponseException.Code.ClientError,
+                "Game " +  number + " does not exist. Use list to see all current games.");
+    }
+
+    private String joinGame(String... params) throws ResponseException {
+        if (params.length == 2) {
+            var game = getGameFromString(params[0]);
+            ChessGame.TeamColor color;
+            switch (params[1].toLowerCase()) {
+                case "white" -> color = ChessGame.TeamColor.WHITE;
+                case "black" -> color = ChessGame.TeamColor.BLACK;
+                default -> throw new ResponseException(ResponseException.Code.ClientError,
+                        "The color must be white or black.");
+            }
+            server.joinGame(game.gameID(), color);
+            return "Joined " + game.gameName() + " as " + color + ".";
+        }
     }
 
     private String help() {
