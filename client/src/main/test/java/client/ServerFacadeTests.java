@@ -115,8 +115,9 @@ public class ServerFacadeTests {
     @Test
     void joinGameNotAuth() throws Exception {
         facade.register("newUser", "newPassword", "nu@gmail.com");
+        int gameID = facade.createGame("newGame");
         facade.logout();
         assertThrows(ResponseException.class,
-                () -> facade.createGame("newGame"));
+                () -> facade.joinGame(gameID, ChessGame.TeamColor.WHITE));
     }
 }
