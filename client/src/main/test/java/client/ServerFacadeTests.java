@@ -45,6 +45,7 @@ public class ServerFacadeTests {
     @Test
     void loginSuccess() throws Exception {
         facade.register("newUser", "newPassword", "nu@gmail.com");
+        facade.logout();
         var authData = facade.login("newUser", "newPassword");
         assertTrue(authData.authToken().length() > 10);
     }
@@ -52,7 +53,23 @@ public class ServerFacadeTests {
     @Test
     void registerBadPassword() throws Exception {
         facade.register("newUser", "newPassword", "nu@gmail.com");
+        facade.logout();
         assertThrows(ResponseException.class,
                 () -> facade.login("newUser", "badPassword"));
     }
+
+    @Test
+    void logoutSuccess() throws Exception {
+        var authData = facade.register("newUser", "newPassword", "nu@gmail.com");
+        assertDoesNotThrow(() -> facade.logout());
+    }
+
+    @Test
+        void logoutError() throws Exception {
+        var authData = facade.register("newUser", "newPassword", "nu@gmail.com");
+        facade.logout();
+        assertThrows(ResponseException.class,
+                () -> facade.logout());
+    }
+
 }
