@@ -1,9 +1,8 @@
 package client;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
-
-import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerFacadeTests {
@@ -90,8 +89,8 @@ public class ServerFacadeTests {
     @Test
     void listGamesSuccess() throws Exception {
         facade.register("newUser", "newPassword", "nu@gmail.com");
-        int gameID1 = facade.createGame("newGame1");
-        int gameID2 = facade.createGame("newGame2");
+        facade.createGame("newGame1");
+        facade.createGame("newGame2");
         var games = facade.listGames();
         assertEquals(2, games.size());
     }
@@ -102,5 +101,22 @@ public class ServerFacadeTests {
         facade.logout();
         assertThrows(ResponseException.class,
                 () -> facade.listGames());
+    }
+
+    @Test
+    void joinGameSuccess() throws Exception {
+        facade.register("newUser", "newPassword", "nu@gmail.com");
+        int gameID = facade.createGame("newGame");
+        facade.joinGame(gameID, ChessGame.TeamColor.WHITE);
+        var games = facade.listGames();
+        assertEquals("newUser", games.get(0).whiteUsername());
+    }
+
+    @Test
+    void joinGameNotAuth() throws Exception {
+        facade.register("newUser", "newPassword", "nu@gmail.com");
+        facade.logout();
+        assertThrows(ResponseException.class,
+                () -> facade.createGame("newGame"));
     }
 }

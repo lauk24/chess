@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 import java.net.URI;
@@ -51,6 +52,11 @@ public class ServerFacade {
         var response = sendRequest(request);
         var result = handleResponse(response, ListGamesResult.class);
         return new ArrayList<>(result.games());
+    }
+
+    public void joinGame(int gameID, ChessGame.TeamColor color) throws ResponseException {
+        var request = buildRequest("PUT", "/game", new JoinGameRequest(null, color, gameID));
+        handleResponse(sendRequest(request), null);
     }
 
     public void clear() throws ResponseException {
