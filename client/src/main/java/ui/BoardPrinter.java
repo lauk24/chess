@@ -3,7 +3,7 @@ import chess.*;
 import static ui.EscapeSequences.*;
 
 public class BoardPrinter {
-    private static final String LIGHT_SQUARE = SET_BG_COLOR_WHITE;
+    private static final String LIGHT_SQUARE = SET_BG_COLOR_LIGHT_GREY;
     private static final String DARK_SQUARE = SET_BG_COLOR_DARK_GREEN;
 
     public static String draw(ChessBoard board, boolean isWhite) {
@@ -25,7 +25,7 @@ public class BoardPrinter {
     private static String square(ChessBoard board, int rank, int file) {
         boolean isLight = (rank + file) % 2 == 1;
         String background = isLight ? LIGHT_SQUARE : DARK_SQUARE;
-        var piece = board.getPiece(new ChessPosition(file, rank));
+        var piece = board.getPiece(new ChessPosition(rank, file));
         return background + getPieceText(piece) + RESET_TEXT_COLOR + RESET_BG_COLOR;
     }
 
@@ -34,7 +34,7 @@ public class BoardPrinter {
             return EMPTY;
         }
         boolean isWhite = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
-        String color = isWhite ? SET_TEXT_COLOR_LIGHT_GREY : SET_TEXT_COLOR_GREEN;
+        String color = isWhite ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
         String symbol = switch(piece.getPieceType()) {
             case KING -> isWhite ? WHITE_KING : BLACK_KING;
             case QUEEN -> isWhite ? WHITE_QUEEN : BLACK_QUEEN;

@@ -1,6 +1,7 @@
 package client;
 import chess.ChessGame;
 import model.GameData;
+import ui.BoardPrinter;
 
 import static ui.EscapeSequences.*;
 
@@ -138,6 +139,7 @@ public class ChessClient {
             throw new ResponseException(ResponseException.Code.ClientError,
                     "The game number must be a positive integer.");
         }
+        games = server.listGames();
         if (number >= 1 || number < games.size()) {
             return games.get(number - 1);
         }
@@ -156,7 +158,8 @@ public class ChessClient {
                         "The color must be white or black.");
             }
             server.joinGame(game.gameID(), color);
-            return "Joined " + game.gameName() + " as " + color + ".";
+            return "Joined " + game.gameName() + " as " + color + ".\n"
+                    + BoardPrinter.draw(new ChessGame().getBoard(), color == ChessGame.TeamColor.WHITE);
         }
         throw new ResponseException(ResponseException.Code.ClientError,
                 "Expected: play <NUMBER> <WHITE|BLACK>");
@@ -165,7 +168,8 @@ public class ChessClient {
     private String observeGame(String... params) throws ResponseException {
         if (params.length == 1) {
             var game = getGameFromString(params[0]);
-            return "Observing " + game.gameName() + ".";
+            return "Observing " + game.gameName() + ".\n"
+                    + BoardPrinter.draw(new ChessGame().getBoard(), true);
         }
         throw new ResponseException(ResponseException.Code.ClientError,
                 "Expected observe <NUMBER>");
