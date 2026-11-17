@@ -5,7 +5,7 @@ import static ui.EscapeSequences.*;
 public class BoardPrinter {
     private static final String LIGHT_SQUARE = SET_BG_COLOR_LIGHT_GREY;
     private static final String DARK_SQUARE = SET_BG_COLOR_DARK_GREEN;
-    private static final String BORDER = SET_BG_COLOR_DARK_GREY;
+    private static final String BORDER = SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE;
 
     public static String draw(ChessBoard board, boolean isWhite) {
         var result = new StringBuilder();
@@ -57,7 +57,7 @@ public class BoardPrinter {
     private static String labelFile (int startFile, int fileStep) {
         var row = new StringBuilder(BORDER + "   ");
         for (int file = startFile; file >= 1 && file <= 8; file += fileStep) {
-            row.append(" ").append((char) 'a' + file - 1).append(" ");
+            row.append(" ").append((char) ('a' + file - 1)).append(" ");
         }
         row.append("   " + RESET_TEXT_COLOR + RESET_BG_COLOR + "\n");
         return row.toString();
