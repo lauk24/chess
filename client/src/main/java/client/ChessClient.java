@@ -104,7 +104,7 @@ public class ChessClient {
             games = server.listGames();
             for (int i = 0; i < games.size(); i++) {
                 if (games.get(i).gameID() == gameID) {
-                    return "Created game " + gameName + " (" + i + ").";
+                    return "Created game " + gameName + " (" + (i+1) + ").";
                 }
             }
             return "Created game " + gameName + ".";
@@ -165,7 +165,6 @@ public class ChessClient {
     private String observeGame(String... params) throws ResponseException {
         if (params.length == 1) {
             var game = getGameFromString(params[0]);
-            server.joinGame(game.gameID(), null);
             return "Observing " + game.gameName() + ".";
         }
         throw new ResponseException(ResponseException.Code.ClientError,
