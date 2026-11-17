@@ -11,12 +11,12 @@ import java.util.Scanner;
 
 public class ChessClient {
     private enum State {
-        SIGNEDOUT,
-        SIGNEDIN
+        SIGNED_OUT,
+        SIGNED_IN
     }
 
     private final ServerFacade server;
-    private State state = State.SIGNEDOUT;
+    private State state = State.SIGNED_OUT;
     private List<GameData> games = new ArrayList<>();
 
     public ChessClient(int port) {
@@ -50,7 +50,7 @@ public class ChessClient {
             String[] tokens = input.trim().split("\\s+");
             String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if (state == State.SIGNEDOUT) {
+            if (state == State.SIGNED_OUT) {
                 return switch(cmd) {
                     case "register" -> register(params);
                     case "login" -> login(params);
@@ -74,7 +74,7 @@ public class ChessClient {
     private String register(String... params) throws ResponseException{
         if (params.length == 3) {
             server.register(params[0], params[1], params[2]);
-            state = State.SIGNEDIN;
+            state = State.SIGNED_IN;
             return "Registered and logged in as " + params[0] + ".";
         }
         throw new ResponseException(ResponseException.Code.ClientError,
@@ -83,7 +83,7 @@ public class ChessClient {
     private String login(String... params) throws ResponseException{
         if (params.length == 2) {
             server.login(params[0], params[1]);
-            state = State.SIGNEDIN;
+            state = State.SIGNED_IN;
             return "Logged in as " + params[0] + ".";
         }
         throw new ResponseException(ResponseException.Code.ClientError,
@@ -92,7 +92,7 @@ public class ChessClient {
 
     private String logout() throws ResponseException{
         server.logout();
-        state = State.SIGNEDOUT;
+        state = State.SIGNED_OUT;
         games = new ArrayList<>();
         return "Logged out.";
     }
@@ -172,7 +172,7 @@ public class ChessClient {
     }
 
     private String help() {
-        if (state == State.SIGNEDOUT) {
+        if (state == State.SIGNED_OUT) {
             return """
                     register <USERNAME> <PASSWORD> <EMAIL> - Create an account
                     login <USERNAME> <PASSWORD> - Login into account
