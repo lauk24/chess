@@ -26,9 +26,9 @@ public class ResponseException extends Exception {
         String message = "Something went wrong. Please try again.";
         try {
             var map = new Gson().fromJson(json, HashMap.class);
-            var status = Code.valueOf(map.get("status").toString());
-            message = map.get("message").toString();
-            return new ResponseException(status, message);
+            if (map != null && map.get("message") != null) {
+                message = map.get("message").toString();
+            }
         } catch (Exception ignored) { }
         return new ResponseException(fromHttpStatusCode(httpStatusCode), message);
     }

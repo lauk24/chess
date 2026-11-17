@@ -3,6 +3,8 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import model.AuthData;
+import model.LoginRequest;
+import model.RegisterRequest;
 import service.*;
 
 public class UserHandler {

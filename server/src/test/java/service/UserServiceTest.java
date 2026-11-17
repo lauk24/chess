@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
+import model.LoginRequest;
+import model.RegisterRequest;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

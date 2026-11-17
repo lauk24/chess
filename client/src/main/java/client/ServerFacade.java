@@ -1,6 +1,8 @@
 package client;
 
 import com.google.gson.Gson;
+import model.AuthData;
+import model.RegisterRequest;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,8 +14,16 @@ public class ServerFacade {
     private final String serverUrl;
     private String authToken;
 
-    public ServerFacade(String port) {
+    public ServerFacade(int port) {
         serverUrl = "http://localhost:" + port;
+    }
+
+    public AuthData register(String username, String password, String email) throws ResponseException {
+        var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email));
+        var response = sendRequest(request);
+        var result = handleResponse(response, AuthData.class);
+        authToken = result.authToken();
+        return result;
     }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
@@ -38,6 +48,29 @@ public class ServerFacade {
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws ResponseException {
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, "Could not connect to server.");
+        }
+    }
 
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+        var status = response.statusCode();
+        if (!isSuccessful(status)) {
+            var body = response.body();
+            if (body != null) {
+                throw ResponseException.fromJson(body, status);
+            }
+            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "Something went wrong. Please try again.");
+        }
+        if (responseClass != null) {
+            return new Gson().fromJson(response.body(), responseClass);
+        }
+        return null;
+    }
+
+    private boolean isSuccessful (int status) {
+        return status /100 == 2;
     }
 }
