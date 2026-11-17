@@ -38,6 +38,13 @@ public class ServerFacade {
         authToken = null;
     }
 
+    public int createGame(String gameName) throws ResponseException {
+        var request = buildRequest("POST", "/game", new CreateGameRequest(null, gameName));
+        var response = sendRequest(request);
+        var result = handleResponse(response, CreateGameResult.class);
+        return result.gameID();
+    }
+
     public void clear() throws ResponseException {
         var request = buildRequest("DELETE", "/db", null);
         handleResponse(sendRequest(request), null);
