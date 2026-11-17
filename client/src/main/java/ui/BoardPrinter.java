@@ -5,6 +5,7 @@ import static ui.EscapeSequences.*;
 public class BoardPrinter {
     private static final String LIGHT_SQUARE = SET_BG_COLOR_LIGHT_GREY;
     private static final String DARK_SQUARE = SET_BG_COLOR_DARK_GREEN;
+    private static final String BORDER = SET_BG_COLOR_DARK_GREY;
 
     public static String draw(ChessBoard board, boolean isWhite) {
         var result = new StringBuilder();
@@ -13,12 +14,15 @@ public class BoardPrinter {
         int startFile = isWhite? 1 : 8;
         int fileStep = isWhite? 1 : -1;
 
+        result.append(labelFile(startFile, fileStep));
         for (int rank = startRank; rank >=1 && rank <= 8; rank += rankStep) {
+            result.append(labelRank(rank));
             for (int file = startFile; file >= 1 && file <= 8; file += fileStep) {
                 result.append(square(board, rank, file));
             }
-            result.append("\n");
+            result.append(labelRank(rank)).append("\n");
         }
+        result.append(labelFile(startFile, fileStep));
         return result.toString();
     }
 
@@ -44,5 +48,18 @@ public class BoardPrinter {
             case PAWN -> isWhite ? WHITE_PAWN : BLACK_PAWN;
         };
         return color + symbol;
+    }
+
+    private static String labelRank (int rank) {
+        return BORDER + " " + rank + " " + RESET_TEXT_COLOR + RESET_BG_COLOR;
+    }
+
+    private static String labelFile (int startFile, int fileStep) {
+        var row = new StringBuilder(BORDER + "   ");
+        for (int file = startFile; file >= 1 && file <= 8; file += fileStep) {
+            row.append(" ").append((char) 'a' + file - 1).append(" ");
+        }
+        row.append("   " + RESET_TEXT_COLOR + RESET_BG_COLOR + "\n");
+        return row.toString();
     }
 }
