@@ -7,6 +7,7 @@ import dataaccess.sql.SqlGameDAO;
 import dataaccess.sql.SqlUserDAO;
 import io.javalin.*;
 import io.javalin.http.Context;
+import server.websocket.WebSocketHandler;
 import service.*;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ public class Server {
     private final ClearService clearService;
     private final UserService userService;
     private final GameService gameService;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         AuthDAO authDAO;
@@ -33,6 +35,7 @@ public class Server {
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
+        webSocketHandler = new WebSocketHandler();
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         UserHandler userHandler = new UserHandler(userService);
@@ -50,7 +53,12 @@ public class Server {
                 .exception(BadRequestException.class, this::badRequestHandler)
                 .exception(AlreadyTakenException.class, this::alreadyTakenHandler)
                 .exception(UnauthorizedException.class, this::unauthorizedHandler)
-                .exception(Exception.class, this::exceptionHandler);
+                .exception(Exception.class, this::exceptionHandler)
+                .ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
+                });
     }
 
     private void badRequestHandler(Exception ex, Context ctx) {

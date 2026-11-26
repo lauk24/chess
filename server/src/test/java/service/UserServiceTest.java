@@ -60,10 +60,12 @@ public class UserServiceTest {
 
     @Test
     void loginSuccess() throws Exception {
-        userAccess.createUser(new UserData("existingUser", "existingPassword", "ex@mail.com"));
+        service.register(new RegisterRequest("existingUser", "existingPassword", "ex@mail.com"));
         LoginRequest request = new LoginRequest("existingUser", "existingPassword");
-        service.login(request);
-        assertEquals(request.password(), userAccess.getUser(request.username()).password());
+        AuthData auth = service.login(request);
+        assertEquals("existingUser", auth.username());
+        assertNotNull(auth.authToken());
+        assertNotNull(authAccess.getAuth(auth.authToken()));
     }
 
     @Test
@@ -76,11 +78,9 @@ public class UserServiceTest {
 
     @Test
     void loginWrongPassword() throws Exception{
-        userAccess.createUser(new UserData("existingUser", "existingPassword", "ex@mail.com"));
+        service.register(new RegisterRequest("existingUser", "existingPassword", "ex@mail.com"));
         LoginRequest request = new LoginRequest("existingUser", "wrongPassword");
-        assertThrows(UnauthorizedException.class, () -> {
-            service.login(request);
-        });
+        assertThrows(UnauthorizedException.class, () -> service.login(request));
     }
 
     @Test
