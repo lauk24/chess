@@ -7,6 +7,7 @@ import dataaccess.sql.SqlGameDAO;
 import dataaccess.sql.SqlUserDAO;
 import io.javalin.*;
 import io.javalin.http.Context;
+import server.websocket.ConnectionManager;
 import server.websocket.WebSocketHandler;
 import service.*;
 
@@ -35,7 +36,7 @@ public class Server {
         clearService = new ClearService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(new ConnectionManager());
 
         ClearHandler clearHandler = new ClearHandler(clearService);
         UserHandler userHandler = new UserHandler(userService);
